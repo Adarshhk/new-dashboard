@@ -10,7 +10,7 @@ export const userStore = defineStore("user", () => {
             "user_role": "Trader",
             "gender": "Male",
             "trading": true,
-            "message": "message1",
+            "message": "message",
             "mobile": "9689898958",
             "mobile_prefix": "+91",
             "name": "kuldeep",
