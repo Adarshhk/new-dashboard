@@ -4,7 +4,7 @@
       <Sidebar/>
   
       <!-- Main content -->
-      <div class="flex-1 bg-gray-100 xs:mt-16">
+      <div class="flex-1 bg-gray-100 ">
         <router-view />
       </div>
     </div>
