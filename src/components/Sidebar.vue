@@ -33,7 +33,7 @@
           </div>
         </router-link>
       </nav>
-      <div class="p-4 xs:mb-24">
+      <div class="p-4 xs:mb-24 sm:mb">
         <button class="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded flex items-center justify-center">
           <img src="" alt="Sourabh" class="w-6 h-6 rounded-full mr-2" />
           <span>Admin</span>
