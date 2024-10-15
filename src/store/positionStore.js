@@ -4,7 +4,7 @@ export const usePositionsStore = defineStore('positionsStore', {
   state: () => ({
     positions: [
       {
-        strategyName: "Super Hero Strategy",
+        strategyName: "DOMAIN OCILLATOR",
         qty: 15,
         type: "Buy",
         time: "08:56 am",
@@ -14,7 +14,7 @@ export const usePositionsStore = defineStore('positionsStore', {
         status: "CLOSED",
       },
       {
-        strategyName: "Super Hero Strategy",
+        strategyName: "DOMAIN PRICE ACTION",
         qty: 15,
         type: "Buy",
         time: "08:56 am",
@@ -24,7 +24,7 @@ export const usePositionsStore = defineStore('positionsStore', {
         status: "CLOSED",
       },
       {
-        strategyName: "Super Hero Strategy",
+        strategyName: "DOMAIN TREND",
         qty: 15,
         type: "Buy",
         time: "08:56 am",
@@ -34,7 +34,7 @@ export const usePositionsStore = defineStore('positionsStore', {
         status: "CLOSED",
       },
       {
-        strategyName: "Super Hero Strategy",
+        strategyName: "DOMAIN RANGE BREAKOUT",
         qty: 15,
         type: "Buy",
         time: "08:56 am",

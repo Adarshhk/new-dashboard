@@ -1,12 +1,11 @@
 <template>
   <div class="flex h-screen bg-gray-100">
-    <!-- Sidebar -->
-    <Sidebar />
+   
 
     <!-- Main content -->
     <div class="flex-1 flex flex-col overflow-hidden">
       <!-- Header -->
-      <header class="bg-white shadow-sm z-10">
+      <header class="bg-white shadow-sm ">
         <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
           <h1 class="text-2xl font-semibold text-gray-900">My Dashboards</h1>
         </div>
@@ -42,7 +41,7 @@
               <div class="text-3xl  font-bold text-gray-900 mb-4">₹{{ profit.todaysProfit }}</div>
               <div class="w-full">
               
-               <ProfitItem class="mb-2" v-for="obj in profit.strategies":color="`bg-gradient-to-r from-pink-100 to-white`" :strategy="obj.name" :amount="obj.profit"/>
+               <ProfitItem class="mb-2" v-for="obj in profit.strategies":color="`bg-gradient-to-r from-yellow-400 to-white`" :strategy="obj.name" :amount="obj.profit"/>
               </div>
               
             </div>
