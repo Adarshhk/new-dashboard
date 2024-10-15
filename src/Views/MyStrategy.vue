@@ -30,7 +30,7 @@
               </td>
               <td class="py-2 px-4">
                 <div class="flex items-center">
-                  <img :src="getBrokerImage(strategy.broker_symbol)" class="w-8 h-8 mr-3 object-contain" :alt="strategy.name">
+                  <img :src="getBrokerImage(strategy.broker.split(' ')[0].toLowerCase())" class="w-8 h-8 mr-3 object-contain" :alt="strategy.name">
                   {{ strategy.broker }}
                 </div>
               </td>
@@ -119,17 +119,16 @@ import { useStrategyStore } from '../store/strategy';
   
   const getBrokerImage = (brokerName) => {
   const imageMap = {
-    'Angel': '/src/assets/images/Angel.png',
-    'IIFL': '/src/assets/images/IIFL.png',
-    'Zerodha': '/src/assets/images/Zerodha.png',
-    'Aliceblue': '/src/assets/images/Aliceblue.png',
-    'Dhan': '/src/assets/images/Dhan.png',
-    'Matrade': '/src/assets/images/Matrade.png',
-    'Shoonya': '/src/assets/images/Shoonya.png'
+    'angel': 'Angel',
+    'iifl': 'IIFL',
+    'zerodha': 'Zerodha',
+    'aliceblue': 'Aliceblue',
+    'dhan': 'Dhan',
+    'mhtrade': 'Matrade',
+    'shoonya': 'Shoonya'
   };
-
-  return imageMap[brokerName]
-
+  const formattedName = imageMap[brokerName.toLowerCase()] || brokerName;
+  return new URL(`../assets/images/${formattedName}.png`, import.meta.url).href;
 }
   
   const toggleActive = (strategy) => {
