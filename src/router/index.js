@@ -6,11 +6,16 @@ import Orders from "../Views/Orders.vue";
 
 import Postition from "../Views/Positions.vue";
 import Broker from "../components/Broker.vue";
+import Profile from "../Views/Profile.vue";
 
 
  const router = createRouter({
     history : createWebHistory(),
     routes : [
+        {
+            path : "/profile",
+            component : Profile
+        },
         {
             path : "/",
             component : Dashboard
