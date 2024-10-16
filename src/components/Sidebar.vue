@@ -1,69 +1,99 @@
 <template>
-  <div class="sidebar">
-    <!-- Hamburger menu for mobile -->
-    <button @click="toggleSidebar" class="lg:hidden fixed top-4 left-4 z-20 bg-teal-800 text-white p-2 rounded-md">
-      <MenuIcon v-if="!isSidebarOpen" class="w-6 h-6" />
-      <XIcon v-else class="w-6 h-6" />
-    </button>
+  <div class="relative">
+    <div class="fixed">
+      <!-- Hamburger menu for mobile -->
+      <button @click="toggleSidebar"
+        class="lg:hidden fixed top-4 left-4 z-20 bg-teal-800 text-white p-2 rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+        aria-label="Toggle sidebar">
+        <MenuIcon v-if="!isSidebarOpen" class="w-6 h-6" />
+        <XIcon v-else class="w-6 h-6" />
+      </button>
 
-    <!-- Sidebar -->
-    <aside :class="{
-      'translate-x-0': isSidebarOpen,
-      '-translate-x-full': !isSidebarOpen,
-      'lg:translate-x-0': true
-    }"
-      class="bg-teal-800 text-white fixed  w-64 h-screen top-0 left-0 z-10 transition-transform duration-300 ease-in-out lg:fixed">
-      <div class="p-4">
-        <span class="text-2xl font-extrabold text-yellow-500">DASH</span>
-        <span class="text-2xl font-extrabold text-white">BOARD!</span>
-      </div>
-
-      <!-- Sidebar navigation items -->
-      <nav class="flex-1 overflow-y-auto">
-        <router-link v-for="item in menuItems" :key="item.name" :to="item.to"
-          class="block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-700 hover:text-white"
-          @click="closeSidebarOnMobile">
-          <div class="flex items-center space-x-2">
-            <component :is="item.icon" class="w-5 h-5" />
-            <span>{{ item.name }}</span>
-          </div>
-        </router-link>
-      </nav>
-
-      <!-- Admin Profile Section -->
-      <div class="p-4 mt-80">
-        <RouterLink to="/profile" class="flex items-center">
-          <div
-            class="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded flex items-center justify-left">
-
-            <img src="/image.png" alt="Sourabh" class="w-6 h-6 rounded-full mr-4" />
-            <span>Admin</span>
-
+      <!-- Sidebar -->
+      <aside :class="{
+        'translate-x-0': isSidebarOpen,
+        '-translate-x-full': !isSidebarOpen,
+        'lg:translate-x-0': true
+      }"
+        class="fixed top-0 left-0 z-10 h-screen w-64 bg-teal-800 text-white transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0">
+        <div class="p-4">
+          <h1 class="text-2xl font-extrabold">
+            <span class="text-yellow-500">DASH</span>
+            <span class="text-white">BOARD!</span>
+          </h1>
         </div>
-        </RouterLink>
-      </div>
-    </aside>
 
-    <!-- Overlay for mobile -->
-    <div v-if="isSidebarOpen" @click="closeSidebar" class="fixed inset-0 bg-black bg-opacity-50 z-5 lg:hidden"></div>
+        <!-- Sidebar navigation items -->
+        <nav class="mt-6">
+          <router-link v-for="item in menuItems" :key="item.name" :to="item.to"
+            class="flex items-center px-4 py-2.5 text-sm font-medium transition-colors duration-200 hover:bg-teal-700 hover:text-white"
+             @click="closeSidebarOnMobile">
+            <component :is="item.icon" class="w-5 h-5 mr-3" />
+            <span>{{ item.name }}</span>
+          </router-link>
+        </nav>
+
+        <!-- Admin Profile Section -->
+        <div class="absolute bottom-0 left-0 right-0 p-4">
+          <div class="relative">
+            <button @click="toggleAdminDropdown"
+              class="flex items-center w-full bg-teal-700 hover:bg-teal-600 text-white font-medium py-2 px-4 rounded transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
+              <img src="/image.png" alt="Admin" class="w-8 h-8 rounded-full mr-3" />
+              <span>{{ userStore().mockData.data.name }}</span>
+              <ChevronDownIcon :class="{ 'transform rotate-180': isAdminDropdownOpen }"
+                class="w-5 h-5 ml-auto transition-transform duration-200" />
+            </button>
+            <div v-if="isAdminDropdownOpen"
+              class="absolute bottom-full left-0 w-full bg-teal-700 rounded-t-md shadow-lg overflow-hidden transition-all duration-200 ease-in-out">
+              <router-link to="/profile"
+                class="block px-4 py-2 text-sm text-white hover:bg-teal-600 transition-colors duration-200"
+                @click="closeAdminDropdown">
+                Profile
+              </router-link>
+              <button @click="handleLogout"
+                class="w-full text-left px-4 py-2 text-sm text-white hover:bg-teal-600 transition-colors duration-200">
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Overlay for mobile -->
+      <div v-if="isSidebarOpen" @click="closeSidebar" class="fixed inset-0 bg-black bg-opacity-50 z-5 lg:hidden"></div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { HomeIcon, BriefcaseIcon, ShoppingCartIcon, CurrencyDollarIcon, MenuIcon, XIcon } from '@heroicons/vue/outline'
-import { RouterLink } from 'vue-router';
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+
+import {
+  HomeIcon,
+  BriefcaseIcon,
+  ShoppingCartIcon,
+  CurrencyDollarIcon,
+  ChartBarIcon,
+  LightningBoltIcon,
+  MenuIcon,
+  XIcon,
+  ChevronDownIcon
+} from '@heroicons/vue/outline'
+import { userStore } from '../store/profile';
 
 const menuItems = [
   { name: 'Dashboards', to: '/', icon: HomeIcon },
   { name: 'Brokers', to: '/brokers', icon: BriefcaseIcon },
   { name: 'Orders', to: '/orders', icon: ShoppingCartIcon },
   { name: 'Position', to: '/position', icon: CurrencyDollarIcon },
-  { name: 'Strategies', to: '/strategies', icon: CurrencyDollarIcon },
-  { name: 'My Strategy', to: '/my-strategy', icon: CurrencyDollarIcon },
+  { name: 'Strategies', to: '/strategies', icon: ChartBarIcon },
+  { name: 'My Strategy', to: '/my-strategy', icon: LightningBoltIcon },
 ]
 
+const router = useRouter()
 const isSidebarOpen = ref(false)
+const isAdminDropdownOpen = ref(false)
 
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value
@@ -78,37 +108,24 @@ const closeSidebarOnMobile = () => {
     closeSidebar()
   }
 }
+
+const toggleAdminDropdown = () => {
+  isAdminDropdownOpen.value = !isAdminDropdownOpen.value
+}
+
+const closeAdminDropdown = () => {
+  isAdminDropdownOpen.value = false
+}
+
+const handleLogout = () => {
+  
+  localStorage.clear()
+  router.push("/login")
+  userData.status = "Failed"
+}
 </script>
 
 <style scoped>
-.sidebar {
-  width: 250px;
-  background-color: white;
-  color: white;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  transition: transform 0.3s ease-in-out;
-}
-
-/* Sidebar transition for mobile */
-@media (max-width: 1023px) {
-  .translate-x-0 {
-    transform: translateX(0);
-  }
-
-  .-translate-x-full {
-    transform: translateX(-100%);
-  }
-}
-
-/* Prevent content from scrolling behind the sidebar */
-body {
-  overflow-x: hidden;
-}
+/* Add any additional custom styles here if needed */
 </style>
+

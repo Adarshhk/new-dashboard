@@ -1,19 +1,18 @@
 <template>
-    <div class="flex h-screen">
-      <!-- Sidebar -->
-      <Sidebar/>
-  
-      <!-- Main content -->
-      <div class="flex-1 bg-gray-100 xs:mt-12 sm:mt-0 sm:ml-60 ">
-        <router-view />
-      </div>
-    </div>
+    <RouterView/>
   </template>
   
   <script setup>
-import Sidebar from './components/Sidebar.vue';
+import { onMounted } from 'vue';
+import { userStore } from './store/profile';
+import { RouterView } from 'vue-router';
+const profile = userStore();
+  const userData = profile.mockData;
 
-
+onMounted(() => {
+  
+  if(localStorage.getItem("authToken") != null) userData.status="Success"
+})
   </script>
   
   <style>

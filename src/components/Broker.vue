@@ -156,7 +156,7 @@
 
     <!-- Orders/Positions Modal -->
     <div v-if="showOrdersPositionsModal" class="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-2">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-7xl">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl"> <!-- Changed max-width to 3xl for smaller size -->
       <div class="p-4">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-2xl font-bold text-gray-800">{{ selectedBroker.name }} ({{ activeTab }})</h2>
@@ -226,7 +226,8 @@
         </div>
       </div>
     </div>
-  </div>
+</div>
+
   </div>
 </template>
 

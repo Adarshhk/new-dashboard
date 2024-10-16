@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 
 export const userStore = defineStore("user", () => {
     const mockData = {
-        "status": "success",
+        "status": "failed",
         "message": "",
         "data": {
             "email": "kuldeep@gmail.com",
