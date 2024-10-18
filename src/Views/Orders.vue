@@ -9,35 +9,34 @@
       <table class="min-w-full divide-y divide-gray-200 compact-table"> <!-- Added compact-table class -->
         <thead class="bg-yellow-500">
           <tr>
-            <th v-for="header in headers" :key="header" class="px-4 py-2 text-left text-xs font-bold text-black uppercase tracking-wider"> <!-- Reduced padding -->
+            <th scope="col" v-for="header in headers" :key="header" class="px-4 py-2 text-left text-xs font-bold text-black uppercase tracking-wider"> <!-- Reduced padding -->
               {{ header }}
             </th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr v-for="order in orders" :key="order.id" class="hover:bg-gray-50">
-            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{{ order.time }}</td> <!-- Reduced padding -->
+            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{{ order.created_at.slice(0,10)}}</td> <!-- Reduced padding and fixed date slicing -->
             <td class="px-4 py-2 whitespace-nowrap">
               <div class="flex items-center">
-                <img :src="getBrokerImage(order.img)" class="w-5 h-5 mr-2 rounded-full" :alt="order.broker">
-                <span class="text-sm text-gray-900">{{ order.broker }}</span>
+                <img :src="getBrokerImage(brokerStore.getBrokersById(order.broker_id)?.broker_name || 'Unknown Broker')" class="w-5 h-5 mr-2 rounded-full" :alt="order.broker_id">
+                <span class="text-sm text-gray-900">{{ brokerStore.getBrokersById(order.broker_id)?.broker_name || 'Unknown Broker' }}</span>
               </div>
             </td>
             <td class="px-4 py-2 whitespace-nowrap">
               <div class="flex items-center">
-                <component :is="getStrategyIcon(order.strategy)" class="w-5 h-5 mr-2 text-gray-500" />
-                <span class="text-sm text-gray-900">{{ order.strategy }}</span>
+                <span class="text-sm text-gray-900">{{ strategyStore.findStrategyById(order.strategy_id).name }}</span>
               </div>
             </td>
-            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{{ order.script }}</td>
+            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{{ order.tradingsymbol }}</td>
             <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{{ order.quantity }}</td>
-            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{{ order.price }}</td>
+            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{{ order.buy_price }}</td>
             <td class="px-4 py-2 whitespace-nowrap">
               <span :class="getStatusClass(order.status)" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
                 {{ order.status }}
               </span>
             </td>
-            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{{ order.productType }}</td>
+            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{{ order.product }}</td>
           </tr>
         </tbody>
       </table>
@@ -47,34 +46,35 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { CubeIcon, ChartBarIcon } from '@heroicons/vue/solid'
 import { useOrdersStore } from '../stores/matrix/order'
+import { useBrokersStore } from '../stores/matrix/broker';
+import { useStrategiesStore } from '../stores/matrix/strategy';
 
 const orderStore = useOrdersStore()
-const orders = ref([])
+const brokerStore = useBrokersStore();
+const strategyStore = useStrategiesStore();
+
+const orders = ref([]) // Ref for reactive data
 const headers = ['Time', 'Broker', 'Strategy', 'Script', 'Quantity', 'Price', 'Status', 'Product Type']
 
 onMounted(async () => {
- 
+  
   orders.value = orderStore.orders
+  console.log(orders.value) // Debugging purposes
 })
 
 const getBrokerImage = (brokerName) => {
   const imageMap = {
-    'Angel': 'Angel.png',
-    'IIFL': 'IIFL.png',
-    'Zerodha': 'Zerodha.png',
-    'Aliceblue': 'Aliceblue.png',
-    'Dhan': 'Dhan.png',
-    'Matrade': 'Matrade.png',
-    'Shoonya': 'Shoonya.png'
+    'angel': 'Angel.png',
+    'iifl': 'IIFL.png',
+    'zerodha': 'Zerodha.png',
+    'aliceblue': 'Aliceblue.png',
+    'dhan': 'Dhan.png',
+    'matrade': 'Matrade.png',
+    'shoonya': 'Shoonya.png'
   };
-  const imageName = imageMap[brokerName.split(' ')[0]] || 'default.png';
+  const imageName = imageMap[brokerName?.split(' ')[0]] || 'default.png'; // Default fallback image
   return new URL(`../assets/images/${imageName}`, import.meta.url).href;
-}
-
-const getStrategyIcon = (strategy) => {
-  return strategy.includes('DOMAIN') ? CubeIcon : ChartBarIcon
 }
 
 const getStatusClass = (status) => {
@@ -86,7 +86,7 @@ const getStatusClass = (status) => {
     'PENDING': 'bg-yellow-100 text-yellow-800',
     'CLOSE': 'bg-gray-100 text-gray-800'
   }
-  return statusClasses[status.split(' ')[0]] || 'bg-gray-100 text-gray-800'
+  return statusClasses[status.split(' ')[0]] || 'bg-gray-100 text-gray-800'; // Fallback for unknown status
 }
 </script>
 

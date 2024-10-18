@@ -23,26 +23,26 @@
           <tr v-for="strategy in strategies" :key="strategy.id" class="border-b">
             <td class="py-2 px-4">
               <div class="flex items-center">
-                <component :is="getStrategyIcon(strategy.name)" class="w-5 h-5 mr-2" />
-                {{ strategy.name }}
+                <!-- <component :is="getStrategyIcon(strategy.name)" class="w-5 h-5 mr-2" /> -->
+                {{ strategiesStore.findStrategyById(strategy.strategy_id).name }}
               </div>
             </td>
             <td class="py-2 px-4 hidden sm:table-cell">
               <div class="flex items-center">
-                <img :src="getBrokerImage(strategy.broker.split(' ')[0].toLowerCase())" class="w-5 h-5 mr-2" :alt="strategy.broker">
-                {{ strategy.broker }}
+                <img :src="getBrokerImage(brokerStore.findBrokerById(strategy.broker_id).broker_name)" class="size-6" alt="" />
+                {{ brokerStore.findBrokerById(strategy.broker_id).broker_name }}
               </div>
             </td>
-            <td class="py-2 px-4 hidden sm:table-cell">{{ strategy.lotSize }}</td>
-            <td class="py-2 px-4 hidden md:table-cell">{{ strategy.reEntry }}</td>
-            <td class="py-2 px-4 hidden lg:table-cell">{{ strategy.reEntryTriggered }}</td>
+            <td class="py-2 px-4 hidden sm:table-cell">{{ strategy.lots }}</td>
+            <td class="py-2 px-4 hidden md:table-cell">{{ strategy.re_entry }}</td>
+            <td class="py-2 px-4 hidden lg:table-cell">{{ strategy.re_entry_triggered }}</td>
             <td class="py-2 px-4 hidden lg:table-cell">
               <label class="switch">
-                <input type="checkbox" v-model="strategy.active" @change="toggleActive(strategy)">
+                <input type="checkbox" v-model="strategy.is_active" @change="toggleActive(strategy)">
                 <span class="slider round"></span>
               </label>
             </td>
-            <td class="py-2 px-4 hidden xl:table-cell">{{ strategy.joinedAt }}</td>
+            <td class="py-2 px-4 hidden xl:table-cell">{{ strategy.created_at.slice(0,10) }}</td>
             <td class="py-2 px-4">
               <button @click="editStrategy(strategy)" class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
               <button @click="deleteStrategy(strategy.id)" class="text-red-600 hover:text-red-800">Delete</button>
@@ -82,7 +82,7 @@
             </div>
           </div>
           <div class="items-center px-4 py-3">
-            <button @click="saveEditedStrategy" class="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
+            <button class="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
               Submit
             </button>
           </div>
@@ -121,17 +121,18 @@
 import { ref, onMounted } from 'vue'
 import { ChartBarIcon } from '@heroicons/vue/solid'
 import { useStrategiesStore } from '../stores/matrix/strategy'
+import { useBrokersStore } from '../stores/matrix/broker';
 
-const strategyStore = useStrategiesStore()
+const strategiesStore = useStrategiesStore()
 const strategies = ref([])
 const showModal = ref(false)
 const showDetailsModal = ref(false)
 const editingStrategy = ref({})
 const selectedStrategy = ref({})
+const brokerStore = useBrokersStore();
 
 onMounted(async () => {
-  
-  strategies.value = strategyStore.strategies
+    strategies.value = strategiesStore.stratgyJoinedPlans;
 })
 
 const getStrategyIcon = (name) => {
@@ -152,9 +153,9 @@ const getBrokerImage = (brokerName) => {
   return new URL(`../assets/images/${formattedName}.png`, import.meta.url).href;
 }
 
-const toggleActive = (strategy) => {
-  strategyStore.updateStrategy(strategy.id, { active: strategy.active })
-}
+// const toggleActive = (strategy) => {
+//   strategyStore.updateStrategy(strategy.id, { active: strategy.active })
+// }
 
 const editStrategy = (strategy) => {
   editingStrategy.value = { ...strategy }
@@ -165,16 +166,16 @@ const closeModal = () => {
   showModal.value = false
 }
 
-const saveEditedStrategy = () => {
-  strategyStore.updateStrategy(editingStrategy.value.id, editingStrategy.value)
-  closeModal()
-}
+// const saveEditedStrategy = () => {
+//   strategyStore.updateStrategy(editingStrategy.value.id, editingStrategy.value)
+//   closeModal()
+// }
 
-const deleteStrategy = (id) => {
-  if (confirm('Are you sure you want to delete this strategy?')) {
-    strategyStore.deleteStrategy(id)
-  }
-}
+// const deleteStrategy = (id) => {
+//   if (confirm('Are you sure you want to delete this strategy?')) {
+//     strategyStore.deleteStrategy(id)
+//   }
+// }
 
 const showDetails = (strategy) => {
   selectedStrategy.value = { ...strategy }
@@ -196,8 +197,8 @@ const formatValue = (key, value) => {
 .switch {
   position: relative;
   display: inline-block;
-  width: 60px;
-  height: 34px;
+  width: 40px;
+  height: 20px;
 }
 
 .switch input {
@@ -220,10 +221,10 @@ const formatValue = (key, value) => {
 .slider:before {
   position: absolute;
   content: "";
-  height: 26px;
-  width: 26px;
+  height: 15px;
+  width: 15px;
   left: 4px;
-  bottom: 4px;
+  bottom: 3px;
   background-color: white;
   transition: .4s;
 }
@@ -233,7 +234,7 @@ input:checked + .slider {
 }
 
 input:checked + .slider:before {
-  transform: translateX(26px);
+  transform: translateX(20px);
 }
 
 .slider.round {

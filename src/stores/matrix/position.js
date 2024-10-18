@@ -165,7 +165,7 @@ export const usePositionsStore = defineStore("positions", () => {
 
   const getPositions = async () => {
     try {
-      const response = await mockdata
+      const response = mockdata
       if (response.data) {
         positions.value = response.data.sort((a, b) => b.id - a.id) || []
         mainPositions.value = positions.value

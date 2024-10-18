@@ -46,7 +46,7 @@ export const useProfileStore = defineStore("profile", () => {
 
   const getProfile = async () => {
     try {
-      const response = await mockData
+      const response = mockData
       if (response.data) {
         profile.value = response.data
         profile.value.profile_picture_url =

@@ -118,12 +118,17 @@ const endpoints = ref({
   logo: '/user/getlogo',
 })
  
+const config = {
+  env : "development"
+}
+
 const getApiUrl = (endpoint) => {
+  const baseUrl = ref("")
   if (config.env != "production") {
     if (endpoint === "login" || endpoint === "logout" || endpoint === "profile" || endpoint === "updateUser" || endpoint === "changePassword" || endpoint === "register" || endpoint === "verifyOTP" || endpoint === "sendForgotOTP" || endpoint === "forgot") {
-      baseUrl = ref("http://localhost:8081");
+      baseUrl.value = "http://localhost:8081";
     } else {
-      baseUrl = ref("http://localhost:8082");
+      baseUrl.value = "http://localhost:8082";
     }
   }
  
@@ -172,7 +177,7 @@ const makeApiRequest = async (config, wait, endpoint, id) => {
   } catch (error) {
     if (error.message == "Network Error") {
       state[endpoint].error = { ...error, statusText: error.message }
-    } else if (error.response.status == 401) {
+    } else if (error.response?.status == 401) {
       localStorage.setItem('token', "")
       localStorage.setItem('role', "");
       state[endpoint].error = error.response;
@@ -186,7 +191,7 @@ const makeApiRequest = async (config, wait, endpoint, id) => {
       state[endpoint].error = error.response;
     }
 
-    if (error.response.status !== 401 && error.response.status !== 503 && endpoint !== 'login' && endpoint !== 'register' && endpoint !== 'verifyOTP' && endpoint !== 'sendForgotOTP' && endpoint !== 'forgot' && endpoint !== 'webhookPositions' && endpoint !== 'positionsPaper' && endpoint !== 'notifications' && endpoint !== 'plans' && endpoint !== 'orders') {
+    if (error.response?.status !== 401 && error.response?.status !== 503 && endpoint !== 'login' && endpoint !== 'register' && endpoint !== 'verifyOTP' && endpoint !== 'sendForgotOTP' && endpoint !== 'forgot' && endpoint !== 'webhookPositions' && endpoint !== 'positionsPaper' && endpoint !== 'notifications' && endpoint !== 'plans' && endpoint !== 'orders') {
       // ManageApiResponse(error.response, endpoint, config.method);
     }
     state[endpoint].loading = false;

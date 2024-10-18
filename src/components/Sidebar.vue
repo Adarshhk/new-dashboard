@@ -39,7 +39,7 @@
             <button @click="toggleAdminDropdown"
               class="flex items-center w-full bg-teal-700 hover:bg-teal-600 text-white font-medium py-2 px-4 rounded transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
               <img src="/image.png" alt="Admin" class="w-8 h-8 rounded-full mr-3" />
-              <span>helo</span>
+              <span>{{ profileStore.profile.name }}</span>
               <ChevronDownIcon :class="{ 'transform rotate-180': isAdminDropdownOpen }"
                 class="w-5 h-5 ml-auto transition-transform duration-200" />
             </button>
@@ -68,6 +68,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useProfileStore } from '../stores/matrix/profile';
 
 import {
   HomeIcon,
@@ -80,6 +81,8 @@ import {
   XIcon,
   ChevronDownIcon
 } from '@heroicons/vue/outline'
+
+const profileStore = useProfileStore();
 
 const menuItems = [
   { name: 'Dashboards', to: '/', icon: HomeIcon },

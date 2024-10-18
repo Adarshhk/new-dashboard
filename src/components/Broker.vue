@@ -1,7 +1,6 @@
 <template>
   <div class="broker-page p-6">
     <div class="flex justify-between items-center mb-6">
-
       <div class="pt-2 mb-2">
         <span class="text-3xl font-extrabold text-[#115e59]">Brokers</span>
       </div>
@@ -10,15 +9,14 @@
         Add New Broker
       </button>
     </div>
-    <span class="my-4 font-semibold">{{ brokersLength }} Brokers Connected</span>
+    <span class="my-4 font-semibold">{{ brokers.length }} Brokers Connected</span>
 
     <div class="bg-white rounded-lg shadow overflow-hidden">
       <table class="min-w-full">
         <thead class="bg-yellow-500">
           <tr>
             <th class="px-6 py-3 text-left text-xs text-black font-bold uppercase tracking-wider">Broker</th>
-            <th class="px-6 py-3 text-left text-xs text-black font-bold uppercase tracking-wider">Broker UserId
-            </th>
+            <th class="px-6 py-3 text-left text-xs text-black font-bold uppercase tracking-wider">Broker UserId</th>
             <th class="px-6 py-3 text-left text-xs text-black font-bold uppercase tracking-wider">Token Date</th>
             <th class="px-6 py-3 text-left text-xs text-black font-bold uppercase tracking-wider">Active</th>
             <th class="px-6 py-3 text-left text-xs text-black font-bold uppercase tracking-wider">Connect</th>
@@ -34,10 +32,10 @@
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ broker.broker_userid }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ broker.broker_userid }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ broker.broker_token_date }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
               <label class="switch">
-                <input type="checkbox" v-model="broker.active" @change="toggleActive(broker)">
+                <input type="checkbox" v-model="broker.is_active" @change="toggleActive(broker)">
                 <span class="slider round"></span>
               </label>
             </td>
@@ -56,253 +54,229 @@
     </div>
 
     <!-- Add/Edit Broker Modal -->
-    <div v-if="showBrokerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl overflow-hidden">
-      <div class="p-6 bg-gray-50 border-b border-gray-200">
-        <h2 class="text-2xl font-bold text-gray-800">{{ isEditing ? 'Edit' : 'Add' }} Broker Info</h2>
+    <div v-if="showAddEditModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl overflow-hidden">
+        <div class="p-6 bg-gray-50 border-b border-gray-200">
+          <h2 class="text-2xl font-bold text-gray-800">{{ editBrokerData.id ? 'Edit' : 'Add' }} Broker Info</h2>
+        </div>
+        <form @submit.prevent="submitBrokerForm" class="p-6">
+          <div class="grid grid-cols-2 gap-6">
+            <div>
+              <label for="broker-name" class="block text-sm font-medium text-gray-700 mb-1">Select Broker*</label>
+              <select v-model="editBrokerData.broker_name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                <option value="">Select a broker</option>
+                <option value="Aliceblue">Aliceblue</option>
+                <option value="Angel">Angel</option>
+                <option value="Dhan">Dhan</option>
+                <option value="IIFL">IIFL</option>
+                <option value="Matrade">Matrade</option>
+                <option value="Shoonya">Shoonya</option>
+                <option value="Zerodha">Zerodha</option>
+              </select>
+            </div>
+            <div>
+              <label for="broker-userid" class="block text-sm font-medium text-gray-700 mb-1">Broker User Id*</label>
+              <input
+                id="broker-userid"
+                v-model="editBrokerData.broker_userid"
+                type="text"
+                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                required
+              >
+            </div>
+            <div>
+              <label for="broker-pin" class="block text-sm font-medium text-gray-700 mb-1">Broker Pin*</label>
+              <input
+                id="broker-pin"
+                v-model="editBrokerData.broker_pin"
+                type="password"
+                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                required
+              >
+            </div>
+            <div>
+              <label for="broker-qrkey" class="block text-sm font-medium text-gray-700 mb-1">Broker Qr Key*</label>
+              <input
+                id="broker-qrkey"
+                v-model="editBrokerData.broker_qr_key"
+                type="text"
+                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                required
+              >
+            </div>
+            <div>
+              <label for="broker-api" class="block text-sm font-medium text-gray-700 mb-1">Broker Api*</label>
+              <input
+                id="broker-api"
+                v-model="editBrokerData.broker_api"
+                type="text"
+                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                required
+              >
+            </div>
+            <div>
+              <label for="broker-apisecret" class="block text-sm font-medium text-gray-700 mb-1">Broker Api Secret*</label>
+              <input
+                id="broker-apisecret"
+                v-model="editBrokerData.broker_api_secret"
+                type="password"
+                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                required
+              >
+            </div>
+            <div>
+              <label for="broker-password" class="block text-sm font-medium text-gray-700 mb-1">Broker Password*</label>
+              <input
+                id="broker-password"
+                v-model="editBrokerData.broker_password"
+                type="password"
+                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                required
+              >
+            </div>
+            <div class="flex items-center">
+              <label for="broker-active" class="block text-sm font-medium text-gray-700 mr-3">Account Active</label>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input id="broker-active" type="checkbox" v-model="editBrokerData.is_active" class="sr-only peer">
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+              </label>
+            </div>
+          </div>
+          <div class="mt-8 flex justify-end space-x-4">
+            <button
+              @click="closeAddEditModal"
+              type="button"
+              class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              {{ editBrokerData.id ? 'Update' : 'Add' }} Broker
+            </button>
+          </div>
+        </form>
       </div>
-      <form @submit.prevent="submitBrokerForm" class="p-6">
-        <div class="grid grid-cols-2 gap-6">
-          <div>
-            <label for="broker-name" class="block text-sm font-medium text-gray-700 mb-1">Select Broker*</label>
-            <select v-model="brokerForm.name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"> <option value="">Select a broker</option> <option value="Aliceblue">Aliceblue</option> <option value="Angel">Angel</option> <option value="Dhan">Dhan</option> <option value="IIFL">IIFL</option> <option value="Matrade">Matrade</option> <option value="Shoonya">Shoonya</option> <option value="Zerodha">Zerodha</option> </select> 
-          </div>
-          <div>
-            <label for="broker-userid" class="block text-sm font-medium text-gray-700 mb-1">Broker User Id*</label>
-            <input
-              id="broker-userid"
-              v-model="brokerForm.userId"
-              type="text"
-              class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              required
-            >
-          </div>
-          <div>
-            <label for="broker-pin" class="block text-sm font-medium text-gray-700 mb-1">Broker Pin*</label>
-            <input
-              id="broker-pin"
-              v-model="brokerForm.pin"
-              type="password"
-              class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              required
-            >
-          </div>
-          <div>
-            <label for="broker-qrkey" class="block text-sm font-medium text-gray-700 mb-1">Broker Qr Key*</label>
-            <input
-              id="broker-qrkey"
-              v-model="brokerForm.qrKey"
-              type="text"
-              class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              required
-            >
-          </div>
-          <div>
-            <label for="broker-api" class="block text-sm font-medium text-gray-700 mb-1">Broker Api*</label>
-            <input
-              id="broker-api"
-              v-model="brokerForm.api"
-              type="text"
-              class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              required
-            >
-          </div>
-          <div>
-            <label for="broker-apisecret" class="block text-sm font-medium text-gray-700 mb-1">Broker Api Secret*</label>
-            <input
-              id="broker-apisecret"
-              v-model="brokerForm.apiSecret"
-              type="password"
-              class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              required
-            >
-          </div>
-          <div>
-            <label for="broker-password" class="block text-sm font-medium text-gray-700 mb-1">Broker Password*</label>
-            <input
-              id="broker-password"
-              v-model="brokerForm.password"
-              type="password"
-              class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              required
-            >
-          </div>
-          <div class="flex items-center">
-            <label for="broker-active" class="block text-sm font-medium text-gray-700 mr-3">Account Active</label>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input id="broker-active" type="checkbox" v-model="brokerForm.active" class="sr-only peer">
-              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-            </label>
-          </div>
-        </div>
-        <div class="mt-8 flex justify-end space-x-4">
-          <button
-            @click="closeBrokerModal"
-            type="button"
-            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            {{ isEditing ? 'Update' : 'Add' }} Broker
-          </button>
-        </div>
-      </form>
     </div>
-  </div>
 
     <!-- Orders/Positions Modal -->
-    <div v-if="showOrdersPositionsModal" class="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-2">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl"> <!-- Changed max-width to 3xl for smaller size -->
-      <div class="p-4">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-2xl font-bold text-gray-800">{{ selectedBroker.broker_name }} ({{ activeTab }})</h2>
-          <button @click="closeOrdersPositionsModal" class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-        <div class="flex mb-4">
-          <button @click="activeTab = 'Orders'"
-            :class="{ 'bg-[#5847f7] text-white': activeTab === 'Orders', 'bg-gray-100 text-gray-700': activeTab !== 'Orders' }"
-            class="px-4 py-2 rounded-l-md text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#5847f7] focus:ring-opacity-50">
-            Orders
-          </button>
-          <button @click="activeTab = 'Positions'"
-            :class="{ 'bg-[#5847f7] text-white': activeTab === 'Positions', 'bg-gray-100 text-gray-700': activeTab !== 'Positions' }"
-            class="px-4 py-2 rounded-r-md text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#5847f7] focus:ring-opacity-50">
-            Positions
-          </button>
-        </div>
-        <div v-if="activeTab === 'Orders'" class="overflow-x-auto">
-          <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-            <thead class="bg-gray-50">
-              <tr>
-                <th v-for="header in ['TIME', 'TICKER', 'SIDE', 'ORDER TYPE', 'PRICE', 'AVG PRICE', 'QTY', 'STATUS']" :key="header"
-                    class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {{ header }}
-                </th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-              <tr v-if="orders.length === 0">
-                <td colspan="8" class="px-4 py-2 text-center text-gray-500">No orders</td>
-              </tr>
-              <tr v-for="order in orders" :key="order.id" class="hover:bg-gray-50 transition-colors duration-200">
-                <td v-for="field in ['time', 'ticker', 'side', 'orderType', 'price', 'avgPrice', 'qty', 'status']" :key="field"
-                    class="px-4 py-2 whitespace-nowrap text-sm" :class="field === 'ticker' ? 'text-gray-900 font-medium' : 'text-gray-500'">
-                  {{ order[field] }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div v-else-if="activeTab === 'Positions'" class="overflow-x-auto">
-          <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-            <thead class="bg-gray-50">
-              <tr>
-                <th v-for="header in ['SYMBOL', 'QTY', 'AVG. PRICE', 'LTP', 'P&L']" :key="header"
-                    class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {{ header }}
-                </th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-              <tr v-if="positions.length === 0">
-                <td colspan="5" class="px-4 py-2 text-center text-gray-500">No positions</td>
-              </tr>
-              <tr v-for="position in positions" :key="position.id" class="hover:bg-gray-50 transition-colors duration-200">
-                <td v-for="field in ['symbol', 'qty', 'avgPrice', 'ltp', 'pnl']" :key="field"
-                    class="px-4 py-2 whitespace-nowrap text-sm" :class="field === 'symbol' ? 'text-gray-900 font-medium' : 'text-gray-500'">
-                  {{ position[field] }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+    <div v-if="showOrderPositionModal" class="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-2">
+      <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl">
+        <div class="p-4">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-gray-800">{{ showBrokerName }} ({{ activeTab }})</h2>
+            <button @click="closeOrdersPositionsModal" class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <div class="flex mb-4">
+            <button @click="activeTab = 'Orders'"
+              :class="{ 'bg-[#5847f7] text-white': activeTab === 'Orders', 'bg-gray-100 text-gray-700': activeTab !== 'Orders' }"
+              class="px-4 py-2 rounded-l-md text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#5847f7] focus:ring-opacity-50">
+              Orders
+            </button>
+            <button @click="activeTab = 'Positions'"
+              :class="{ 'bg-[#5847f7] text-white': activeTab === 'Positions', 'bg-gray-100 text-gray-700': activeTab !== 'Positions' }"
+              class="px-4 py-2 rounded-r-md text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#5847f7] focus:ring-opacity-50">
+              Positions
+            </button>
+          </div>
+          <div v-if="activeTab === 'Orders'" class="overflow-x-auto">
+            <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th v-for="header in ['TIME', 'TICKER', 'SIDE', 'ORDER TYPE', 'PRICE', 'AVG PRICE', 'QTY', 'STATUS']" :key="header"
+                      class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ header }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <tr v-if="brokerOrders.length === 0">
+                  <td colspan="8" class="px-4 py-2 text-center text-gray-500">No orders</td>
+                </tr>
+                <tr v-for="order in brokerOrders" :key="order.id" class="hover:bg-gray-50 transition-colors duration-200">
+                  <td v-for="field in ['time', 'ticker', 'side', 'orderType', 'price', 'avgPrice', 'qty', 'status']" :key="field"
+                      class="px-4 py-2 whitespace-nowrap text-sm" :class="field === 'ticker' ? 'text-gray-900 font-medium' : 'text-gray-500'">
+                    {{ order[field] }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div v-else-if="activeTab === 'Positions'" class="overflow-x-auto">
+            <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th v-for="header in ['SYMBOL', 'QTY', 'AVG. PRICE', 'LTP', 'P&L']" :key="header"
+                      class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ header }}
+                  </th>
+                </tr>
+              
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <tr v-if="brokerPositions.length === 0">
+                  <td colspan="5" class="px-4 py-2 text-center text-gray-500">No positions</td>
+                </tr>
+                <tr v-for="position in brokerPositions" :key="position.id" class="hover:bg-gray-50 transition-colors duration-200">
+                  <td v-for="field in ['symbol', 'qty', 'avgPrice', 'ltp', 'pnl']" :key="field"
+                      class="px-4 py-2 whitespace-nowrap text-sm" :class="field === 'symbol' ? 'text-gray-900 font-medium' : 'text-gray-500'">
+                    {{ position[field] }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
-</div>
-
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
-import Modal from '../components/Modal.vue'
-import { useBrokersStore } from '../stores/matrix/broker';
+import { ref, computed, onMounted } from 'vue'
+import { useBrokersStore } from '../stores/matrix/broker'
 
 const brokerStore = useBrokersStore()
 const brokers = computed(() => brokerStore.brokers)
-const brokersLength = brokerStore.brokers.length
-const showBrokerModal = ref(false)
-const isEditing = ref(false)
-const brokerForm = reactive({
-  name: '',
-  userId: '',
-  pin: '',
-  qrKey: '',
-  api: '',
-  apiSecret: '',
-  password: '',
-  active: false
+const activeTab = ref('Orders')
+
+onMounted(() => {
+  brokerStore.getBrokers()
 })
 
-const showOrdersPositionsModal = ref(false)
-const selectedBroker = ref({})
-const activeTab = ref('Orders')
-const orders = ref([])
-const positions = ref([])
-
 const openAddBrokerModal = () => {
-  isEditing.value = false
-  Object.assign(brokerForm, {
-    name: '',
-    userId: '',
-    pin: '',
-    qrKey: '',
-    api: '',
-    apiSecret: '',
-    password: '',
-    active: false
-  })
-  showBrokerModal.value = true
+  brokerStore.editBrokerData = {}
+  brokerStore.showAddEditModal = true
 }
 
-const openEditBrokerModal = (broker) => {
-  isEditing.value = true
-  Object.assign(brokerForm, broker)
-  showBrokerModal.value = true
-}
-
-const closeBrokerModal = () => {
-  showBrokerModal.value = false
+const closeAddEditModal = () => {
+  brokerStore.showAddEditModal = false
 }
 
 const submitBrokerForm = () => {
-  if (isEditing.value) {
-    brokerStore.updateBroker(brokerForm.id, brokerForm)
-  } else {
-    brokerStore.addBroker(brokerForm)
-  }
-  closeBrokerModal()
+  brokerStore.addEditBroker(brokerStore.editBrokerData.id, brokerStore.editBrokerData)
+  closeAddEditModal()
 }
 
 const toggleActive = (broker) => {
-  brokerStore.toggleBrokerActive(broker.id)
+  broker.is_active = !broker.is_active
+  brokerStore.addEditBroker(broker.id, broker)
 }
 
 const connectBroker = (broker) => {
   // Implement broker connection logic
-  console.log('Connecting to broker:', broker.name)
+  console.log('Connecting to broker:', broker.broker_name)
 }
 
 const editBroker = (broker) => {
-  openEditBrokerModal(broker)
+  brokerStore.editBrokerData = { ...broker }
+  brokerStore.showAddEditModal = true
 }
 
 const deleteBroker = (brokerId) => {
@@ -311,31 +285,27 @@ const deleteBroker = (brokerId) => {
   }
 }
 
-const openOrdersPositionsModal = (broker) => {
-  selectedBroker.value = broker
-  showOrdersPositionsModal.value = true
-  // Fetch orders and positions data for the selected broker
-  orders.value = brokerStore.getOrders(broker.id)
-  positions.value = brokerStore.getPositions(broker.id)
+const openOrdersPositionsModal = async (broker) => {
+  brokerStore.showOrderPositionModal = true
+  await brokerStore.showOrdersview(broker)
 }
 
 const closeOrdersPositionsModal = () => {
-  showOrdersPositionsModal.value = false
+  brokerStore.showOrderPositionModal = false
 }
 
 const getBrokerImage = (brokerName) => {
   const imageMap = {
-    'angel': '/src/assets/images/Angel.png',
-    'iifl': '/src/assets/images/IIFL.png',
-    'zerodha': '/src/assets/images/Zerodha.png',
-    'aliceblue': '/src/assets/images/Aliceblue.png',
-    'dhan': '/src/assets/images/Dhan.png',
-    'matrade': '/src/assets/images/Matrade.png',
-    'shoonya': '/src/assets/images/Shoonya.png'
+    'angel': 'Angel.png',
+    'iifl': 'IIFL.png',
+    'zerodha': 'Zerodha.png',
+    'aliceblue': 'Aliceblue.png',
+    'dhan': 'Dhan.png',
+    'matrade': 'Matrade.png',
+    'shoonya': 'Shoonya.png'
   };
-
-  return imageMap[brokerName]
-
+  const imageName = imageMap[brokerName?.split(' ')[0]] || `${brokerName?.toLowerCase()}.png`;
+  return new URL(`../assets/images/${imageName}`, import.meta.url).href;
 }
 </script>
 

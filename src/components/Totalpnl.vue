@@ -1,6 +1,6 @@
 <template>
 
-    <div v-if="totalProfit" class="intro-y font-bold" :class="totalProfit < 0 ? 'text-red-500' :totalProfit >0 ? 'text-green-500':''">
+    <div v-if="totalProfit" class="intro-y text-3xl mb-4 font-bold" :class="totalProfit < 0 ? 'text-red-500' :totalProfit >0 ? 'text-green-500':''">
     {{ totalProfit>0?'+':'' }}{{ totalProfit }}
     </div>
     

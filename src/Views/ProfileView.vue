@@ -15,15 +15,15 @@
           <div class="flex items-center mb-6">
             <img src="/dummy.jpeg" alt="Profile Picture" class="w-24 h-24 rounded-full mr-6 object-cover" />
             <div>
-              <h2 class="text-2xl font-semibold text-yellow-500">Welcome <span>{{ userData.data.name }}</span></h2>
-              <p class="text-white">{{userData.data.user_role}}</p>
+              <h2 class="text-2xl font-semibold text-yellow-500">Welcome <span>{{ profileData.name }}</span></h2>
+              <p class="text-white">{{profileData.user_role}}</p>
             </div>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <h3 class="text-lg font-semibold text-yellow-500 mb-2">Contact Details</h3>
-              <p class="text-white">{{userData.data.email}}</p>
-              <p class="text-white">{{userData.data.mobile}}</p>
+              <p class="text-white">{{profileData.email}}</p>
+              <p class="text-white">{{profileData.mobile}}</p>
             </div>
           </div>
         </div>
@@ -37,7 +37,7 @@
               </div>
               <div class="mb-4">
                 <label class="block text-sm font-medium text-white mb-1">Name</label>
-                <input type="text" :value="userData.data.name" class="w-full p-2 bg-[#177e77] text-white rounded-md" readonly />
+                <input type="text" :value="profileData.name" class="w-full p-2 bg-[#177e77] text-white rounded-md" readonly />
               </div>
               <div>
                 <label class="block text-sm font-medium text-white mb-1">Change Profile Picture</label>
@@ -122,9 +122,13 @@
   <script setup>
 import { useRoute, useRouter } from 'vue-router';
 import { useProfileStore } from '../stores/matrix/profile';
+import { onMounted, ref } from 'vue';
+const profileStore = useProfileStore();
+const profileData = ref({})
+onMounted(()=> {
 
-    const user = useProfileStore();
-    const userData = user.profile
+  profileData.value = profileStore.profile;
+})
     
   </script>
   
