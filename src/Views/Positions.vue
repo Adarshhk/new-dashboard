@@ -55,16 +55,13 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { CubeIcon } from '@heroicons/vue/solid'
-import  {usePositionStore}  from '../store/positions';
+import { usePositionsStore } from '../stores/matrix/position';
 
-const positionStore = usePositionStore()
+const positionStore = usePositionsStore()
 const positions = ref([])
+positions.value = positionStore.positions
 const headers = ['Strategy', 'Broker', 'Script', 'Product', 'Side', 'Quantity', 'Buy Price', 'Sell Price', 'Position Status', 'P&L']
 
-onMounted(async () => {
-  await positionStore.fetchPositions()
-  positions.value = positionStore.positions
-})
 
 const todayProfit = computed(() => {
   return positions.value.reduce((total, position) => total + position.pnl, 0)

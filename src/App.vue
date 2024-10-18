@@ -1,18 +1,12 @@
 <template>
     <RouterView/>
-  </template>
+</template>
   
   <script setup>
-import { onMounted } from 'vue';
-import { userStore } from './store/profile';
-import { RouterView } from 'vue-router';
-const profile = userStore();
-  const userData = profile.mockData;
 
-onMounted(() => {
-  
-  if(localStorage.getItem("authToken") != null) userData.status="Success"
-})
+import { RouterView } from 'vue-router';
+
+
   </script>
   
   <style>

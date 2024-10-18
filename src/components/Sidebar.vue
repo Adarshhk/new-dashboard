@@ -16,7 +16,7 @@
         'lg:translate-x-0': true
       }"
         class="fixed top-0 left-0 z-10 h-screen w-64 bg-teal-800 text-white transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0">
-        <div class="p-4">
+        <div class="p-4 xs:mt-11 sm:mt-0">
           <h1 class="text-2xl font-extrabold">
             <span class="text-yellow-500">DASH</span>
             <span class="text-white">BOARD!</span>
@@ -39,7 +39,7 @@
             <button @click="toggleAdminDropdown"
               class="flex items-center w-full bg-teal-700 hover:bg-teal-600 text-white font-medium py-2 px-4 rounded transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
               <img src="/image.png" alt="Admin" class="w-8 h-8 rounded-full mr-3" />
-              <span>{{ userStore().mockData.data.name }}</span>
+              <span>helo</span>
               <ChevronDownIcon :class="{ 'transform rotate-180': isAdminDropdownOpen }"
                 class="w-5 h-5 ml-auto transition-transform duration-200" />
             </button>
@@ -80,7 +80,6 @@ import {
   XIcon,
   ChevronDownIcon
 } from '@heroicons/vue/outline'
-import { userStore } from '../store/profile';
 
 const menuItems = [
   { name: 'Dashboards', to: '/', icon: HomeIcon },
@@ -121,7 +120,6 @@ const handleLogout = () => {
   
   localStorage.clear()
   router.push("/login")
-  userData.status = "Failed"
 }
 </script>
 

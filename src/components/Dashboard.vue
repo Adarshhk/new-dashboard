@@ -16,15 +16,15 @@
           <div class="flex flex-col xl:flex-row gap-6 mb-6">
             <!-- Welcome message -->
             <div class="w-full xl:w-1/2 bg-teal-600 rounded-lg p-6 text-white">
-              <h2 class="text-2xl font-bold">Hello, {{ userData.data.name }}</h2>
+              <h2 class="text-2xl font-bold">Hello, {{ profileData.name }}</h2>
               <p class="mt-1 text-teal-100">Welcome back! Let's start your trade with the best strategies by us</p>
               <RouterLink to="/profile" class="text-yellow-300 hover:text-yellow-100 mt-2 inline-block">View Profile >></RouterLink>
             </div>
             <!-- Metrics Cards -->
             <div class="w-full xl:w-1/2 grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <MetricItem title="Total Users" :value="user.totalCustomer" icon="UserGroupIcon" accentColor="indigo" iconColor="indigo" />
-              <MetricItem title="Strategy" :value="user.totalStrategies" icon="CogIcon" accentColor="red" iconColor="red" />
-              <MetricItem title="Total Orders" :value="user.totalOrders" icon="CubeIcon" accentColor="green" iconColor="green" />
+              <MetricItem title="Total Users" :value="profileData.plan_id" icon="UserGroupIcon" accentColor="indigo" iconColor="indigo" />
+              <MetricItem title="Strategy" :value="strategyJoined.length" icon="CogIcon" accentColor="red" iconColor="red" />
+              <MetricItem title="Total Orders" :value="orders.length" icon="CubeIcon" accentColor="green" iconColor="green" />
             </div>
           </div>
 
@@ -36,16 +36,16 @@
                 <h3 class="text-lg font-semibold text-gray-900">Today's Profit</h3>
                 <button class="bg-teal-600 text-white px-3 py-1 rounded hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">Square off</button>
               </div>
-              <div class="text-3xl font-bold text-gray-900 mb-4">₹{{ profit.todaysProfit }}</div>
+              <Totalpnl/>
               <div class="w-full">
-                <ProfitItem 
+                <!-- <ProfitItem 
                   v-for="obj in profit.strategies" 
                   :key="obj.name"
                   class="mb-2" 
                   :color="`bg-gradient-to-r from-yellow-400 to-white`" 
                   :strategy="obj.name" 
                   :amount="obj.profit"
-                />
+                /> -->
               </div>
             </div>
 
@@ -53,9 +53,9 @@
             <div class="bg-white shadow rounded-lg p-6">
               <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-semibold text-gray-900">Positions</h3>
-                <a href="#" class="text-teal-600 hover:text-teal-800 focus:outline-none focus:underline">See all</a>
+                <RouterLink to="/position" class="text-teal-600 hover:text-teal-800 focus:outline-none focus:underline">See all</RouterLink>
               </div>
-              <PositionsTable :positions="position.positions" />
+              <PositionsTable :positions="strategyJoined" />
             </div>
           </div>
         </div>
@@ -68,16 +68,25 @@
 import { ref } from 'vue'
 import ProfitItem from './ProfitItem.vue'
 import PositionsTable from './PositionsTable.vue'
-import { usePositionsStore } from '../store/positionStore'
-import { useUserStore } from '../store/userStore'
-import { useProfitStore } from '../store/profitStore'
 import MetricItem from './MetricItem.vue'
 import { RouterLink } from 'vue-router'
-import { userStore } from '../store/profile'
+import { useProfileStore } from '../stores/matrix/profile'
+import { useStrategiesStore } from '../stores/matrix/strategy'
+import { useOrdersStore } from '../stores/matrix/order'
+import { useUsersStore } from '../stores/matrix/users'
 
-const position = usePositionsStore();
-const user = useUserStore()
-const profit = useProfitStore();
-const profile = userStore();
-const userData = profile.mockData;
+import Totalpnl from './Totalpnl.vue'
+
+const profileStore = useProfileStore();
+const strategyStore = useStrategiesStore();
+const orderStore = useOrdersStore();
+const userStore = useUsersStore();
+
+
+const orders = orderStore.orders;
+const strategyJoined = strategyStore.stratgyJoinedPlans;
+const profileData = profileStore.;
+const users = userStore.users;
+
+
 </script>

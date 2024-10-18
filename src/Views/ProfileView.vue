@@ -4,6 +4,12 @@
         <div class="pt-2 mb-2">
         <span class="text-3xl font-extrabold text-[#115e59]">Profile</span>
       </div>
+      <div class="bg-[#115e59] rounded-lg shadow-md p-6  top-8 xs:block sm:hidden">
+              <h3 class="text-xl font-semibold text-yellow-500 mb-4">Quote of the Day</h3>
+              <p class="text-white italic">
+                "Success is not final, failure is not fatal: It is the courage to continue that counts." - Winston Churchill
+              </p>
+            </div>
         
         <div class="bg-[#115e59] rounded-lg shadow-md p-6 mb-8 mt-4">
           <div class="flex items-center mb-6">
@@ -98,8 +104,8 @@
             </div>
           </div>
   
-          <div class="col-span-1">
-            <div class="bg-[#115e59] rounded-lg shadow-md p-6 sticky top-8">
+          <div class="col-span-1 ">
+            <div class="bg-[#115e59] rounded-lg shadow-md p-6 sticky top-8 xs:hidden sm:block">
               <h3 class="text-xl font-semibold text-yellow-500 mb-4">Quote of the Day</h3>
               <p class="text-white italic">
                 "Success is not final, failure is not fatal: It is the courage to continue that counts." - Winston Churchill
@@ -115,10 +121,10 @@
   
   <script setup>
 import { useRoute, useRouter } from 'vue-router';
-import { userStore } from '../store/profile';
+import { useProfileStore } from '../stores/matrix/profile';
 
-    const user = userStore();
-    const userData = user.mockData
+    const user = useProfileStore();
+    const userData = user.profile
     
   </script>
   

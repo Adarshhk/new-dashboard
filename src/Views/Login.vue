@@ -52,9 +52,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { userStore } from '../store/profile';
-const profile = userStore();
-const userData = profile.mockData;
+
 const email = ref('');
 const password = ref('');
 const errorMessage = ref('');
@@ -64,11 +62,11 @@ const handleSubmit = () => {
         errorMessage.value = 'Please fill in both fields';
         return;
     }
-    userData.data.email = email;
+    
     
     localStorage.setItem("authToken", "1234");
     router.push("/")
-    userData.status = "Success";
+   
 };
 </script>
 

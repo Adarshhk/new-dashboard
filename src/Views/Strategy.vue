@@ -1,21 +1,21 @@
 <template>
   <div class="strategy-page p-6">
     <div class="pt-2 mb-2">
-        <span class="text-3xl font-extrabold text-[#115e59]">Strategies</span>
-      </div>
-      <span class="my-4 font-semibold">{{ strategies.length }} Total Strategies</span>
+      <span class="text-3xl font-extrabold text-[#115e59]">Strategies</span>
+    </div>
+    <span class="my-4 font-semibold">{{ strategies.length }} Total Strategies</span>
     
     <div class="overflow-x-auto">
-      <table class="min-w-full ">
+      <table class="min-w-full">
         <thead class="bg-yellow-500">
           <tr>
             <th class="py-2 px-4 text-left">Strategy</th>
-            <th class="py-2 px-4 text-left">Broker</th>
-            <th class="py-2 px-4 text-left">Lot Size</th>
-            <th class="py-2 px-4 text-left">ReEntry</th>
-            <th class="py-2 px-4 text-left">ReEntry Triggered</th>
-            <th class="py-2 px-4 text-left">Active</th>
-            <th class="py-2 px-4 text-left">Joined At</th>
+            <th class="py-2 px-4 text-left hidden sm:table-cell">Broker</th>
+            <th class="py-2 px-4 text-left hidden sm:table-cell">Lot Size</th>
+            <th class="py-2 px-4 text-left hidden md:table-cell">ReEntry</th>
+            <th class="py-2 px-4 text-left hidden lg:table-cell">ReEntry Triggered</th>
+            <th class="py-2 px-4 text-left hidden lg:table-cell">Active</th>
+            <th class="py-2 px-4 text-left hidden xl:table-cell">Joined At</th>
             <th class="py-2 px-4 text-left">ACTIONS</th>
           </tr>
         </thead>
@@ -27,25 +27,26 @@
                 {{ strategy.name }}
               </div>
             </td>
-            <td class="py-2 px-4">
+            <td class="py-2 px-4 hidden sm:table-cell">
               <div class="flex items-center">
                 <img :src="getBrokerImage(strategy.broker.split(' ')[0].toLowerCase())" class="w-5 h-5 mr-2" :alt="strategy.broker">
                 {{ strategy.broker }}
               </div>
             </td>
-            <td class="py-2 px-4">{{ strategy.lotSize }}</td>
-            <td class="py-2 px-4">{{ strategy.reEntry }}</td>
-            <td class="py-2 px-4">{{ strategy.reEntryTriggered }}</td>
-            <td class="py-2 px-4">
+            <td class="py-2 px-4 hidden sm:table-cell">{{ strategy.lotSize }}</td>
+            <td class="py-2 px-4 hidden md:table-cell">{{ strategy.reEntry }}</td>
+            <td class="py-2 px-4 hidden lg:table-cell">{{ strategy.reEntryTriggered }}</td>
+            <td class="py-2 px-4 hidden lg:table-cell">
               <label class="switch">
                 <input type="checkbox" v-model="strategy.active" @change="toggleActive(strategy)">
                 <span class="slider round"></span>
               </label>
             </td>
-            <td class="py-2 px-4">{{ strategy.joinedAt }}</td>
-            <td class="py-2 px-4">
+            <td class="py-2 px-4 hidden xl:table-cell">{{ strategy.joinedAt }}</td>
+            <td class="py-2 px-4 ">
               <button @click="editStrategy(strategy)" class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
               <button @click="deleteStrategy(strategy.id)" class="text-red-600 hover:text-red-800">Delete</button>
+              <button @click="showDetails(strategy)" class="text-green-600 hover:text-green-800 xl:hidden ml-1">Details</button>
             </td>
           </tr>
         </tbody>
@@ -93,21 +94,44 @@
         </div>
       </div>
     </div>
+
+    <!-- Details Modal -->
+    <div v-if="showDetailsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" id="details-modal">
+      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+          <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">Strategy Details</h3>
+          <div class="mt-2 text-sm text-gray-500">
+            <p><strong>Broker:</strong> {{ selectedStrategy.broker }}</p>
+            <p><strong>Lot Size:</strong> {{ selectedStrategy.lotSize }}</p>
+            <p><strong>ReEntry:</strong> {{ selectedStrategy.reEntry }}</p>
+            <p><strong>ReEntry Triggered:</strong> {{ selectedStrategy.reEntryTriggered }}</p>
+            <p><strong>Active:</strong> {{ selectedStrategy.active ? 'Yes' : 'No' }}</p>
+            <p><strong>Joined At:</strong> {{ selectedStrategy.joinedAt }}</p>
+          </div>
+          <div class="items-center px-4 py-3">
+            <button @click="closeDetailsModal" class="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-black focus:outline-none focus:ring-2 focus:ring-gray-300">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { ChartBarIcon } from '@heroicons/vue/solid'
-import { useStrategyStore } from '../store/strategy'
+import { useStrategiesStore } from '../stores/matrix/strategy';
 
-const strategyStore = useStrategyStore()
+const strategyStore = useStrategiesStore()
 const strategies = ref([])
 const showModal = ref(false)
+const showDetailsModal = ref(false)
 const editingStrategy = ref({})
+const selectedStrategy = ref({})
 
 onMounted(async () => {
-  await strategyStore.fetchStrategies()
   strategies.value = strategyStore.strategies
 })
 
@@ -151,6 +175,15 @@ const deleteStrategy = (id) => {
   if (confirm('Are you sure you want to delete this strategy?')) {
     strategyStore.deleteStrategy(id)
   }
+}
+
+const showDetails = (strategy) => {
+  selectedStrategy.value = { ...strategy }
+  showDetailsModal.value = true
+}
+
+const closeDetailsModal = () => {
+  showDetailsModal.value = false
 }
 </script>
 

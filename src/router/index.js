@@ -5,12 +5,13 @@ import Strategies from "../Views/Strategy.vue";
 import Orders from "../Views/Orders.vue";
 import Postition from "../Views/Positions.vue";
 import Broker from "../components/Broker.vue";
-import Profile from "../Views/Profile.vue";
+import Profile from "../Views/ProfileView.vue";
 import Login from "../Views/Login.vue";
-import { userStore } from "../store/profile";
 import Signup from "../Views/Signup.vue";
 import ForgotPassword from "../Views/ForgotPassword.vue";
 import HomeLayout from "../layout/HomeLayout.vue";
+import ProfileView from "../Views/ProfileView.vue";
+
 
 
 const isAuthenticated = () => {
@@ -32,7 +33,7 @@ const router = createRouter({
         },
         {
           path: "/profile",
-          component: Profile,
+          component: ProfileView,
         },
         {
           path: "/my-strategy",

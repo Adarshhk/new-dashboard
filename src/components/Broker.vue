@@ -10,7 +10,7 @@
         Add New Broker
       </button>
     </div>
-    <span class="my-4 font-semibold">{{ brokers.length }} Brokers Connected</span>
+    <span class="my-4 font-semibold">{{ brokersLength }} Brokers Connected</span>
 
     <div class="bg-white rounded-lg shadow overflow-hidden">
       <table class="min-w-full">
@@ -29,12 +29,12 @@
           <tr v-for="broker in brokers" :key="broker.id" :class="{ 'bg-gray-50': broker.id % 2 === 0 }">
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center">
-                <img :src="getBrokerImage(broker.name)" class="w-8 h-8 mr-3 object-contain" :alt="broker.name">
-                <span class="font-medium text-gray-900">{{ broker.name }}</span>
+                <img :src="getBrokerImage(broker.broker_name)" class="w-8 h-8 mr-3 object-contain" :alt="broker.broker_name">
+                <span class="font-medium text-gray-900">{{ broker.broker_name }}</span>
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ broker.userId }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ broker.tokenDate }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ broker.broker_userid }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ broker.broker_userid }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
               <label class="switch">
                 <input type="checkbox" v-model="broker.active" @change="toggleActive(broker)">
@@ -159,7 +159,7 @@
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl"> <!-- Changed max-width to 3xl for smaller size -->
       <div class="p-4">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-2xl font-bold text-gray-800">{{ selectedBroker.name }} ({{ activeTab }})</h2>
+          <h2 class="text-2xl font-bold text-gray-800">{{ selectedBroker.broker_name }} ({{ activeTab }})</h2>
           <button @click="closeOrdersPositionsModal" class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -234,11 +234,11 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import Modal from '../components/Modal.vue'
-import { useBrokerStore } from "../store/broker"
+import { useBrokersStore } from '../stores/matrix/broker';
 
-const brokerStore = useBrokerStore()
-const brokers = computed(() => brokerStore.getBrokers)
-
+const brokerStore = useBrokersStore()
+const brokers = computed(() => brokerStore.brokers)
+const brokersLength = brokerStore.brokers.length
 const showBrokerModal = ref(false)
 const isEditing = ref(false)
 const brokerForm = reactive({
@@ -325,13 +325,13 @@ const closeOrdersPositionsModal = () => {
 
 const getBrokerImage = (brokerName) => {
   const imageMap = {
-    'Angel': '/src/assets/images/Angel.png',
-    'IIFL': '/src/assets/images/IIFL.png',
-    'Zerodha': '/src/assets/images/Zerodha.png',
-    'Aliceblue': '/src/assets/images/Aliceblue.png',
-    'Dhan': '/src/assets/images/Dhan.png',
-    'Matrade': '/src/assets/images/Matrade.png',
-    'Shoonya': '/src/assets/images/Shoonya.png'
+    'angel': '/src/assets/images/Angel.png',
+    'iifl': '/src/assets/images/IIFL.png',
+    'zerodha': '/src/assets/images/Zerodha.png',
+    'aliceblue': '/src/assets/images/Aliceblue.png',
+    'dhan': '/src/assets/images/Dhan.png',
+    'matrade': '/src/assets/images/Matrade.png',
+    'shoonya': '/src/assets/images/Shoonya.png'
   };
 
   return imageMap[brokerName]

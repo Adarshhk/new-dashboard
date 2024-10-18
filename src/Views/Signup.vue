@@ -103,7 +103,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { userStore } from '../store/profile';
+
 
 const username = ref('');
 const email = ref('');
@@ -112,8 +112,7 @@ const password = ref('');
 const confirmPassword = ref('');
 const errorMessage = ref('');
 const router = useRouter();
-const profile = userStore();
-const userData = profile.mockData;
+
 
 const handleSignup = () => {
 
@@ -124,10 +123,7 @@ const handleSignup = () => {
   }
 
   localStorage.setItem('authToken', '1234');
-  userData.status = "Success"
-  userData.data.name = username;
-  userData.data.email = email;
-  userData.data.mobile = phone
+
   router.push('/');
 };
 
