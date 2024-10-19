@@ -1,98 +1,193 @@
 <template>
   <div class="bg-[#1c5a5a] min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
-    <div class="border-2 border-yellow-500 rounded-lg px-4 py-8 sm:px-8 sm:py-10 w-full max-w-md">
+    <div class="border-2 border-yellow-500 rounded-lg px-4 py-8 sm:px-8 sm:py-10 w-full max-w-lg">
       <h2 class="text-2xl sm:text-3xl font-bold text-center text-yellow-500 mb-8 sm:mb-12">Sign Up</h2>
-      <form @submit.prevent="handleSignup" class="space-y-6">
-        <div>
-          <label class="block text-white text-sm font-bold mb-2" for="username">
-            Username
-          </label>
+      <form @submit.prevent="verifyOtp" class="space-y-6">
+        <div v-if="!otpAuthSignup">
+          <!-- Full Name -->
+          <div>
+            <label for="name" class="block text-white text-sm font-bold mb-2">Full Name</label>
+            <input
+              id="name"
+              type="text"
+              name="name"
+              v-model.trim="validateSignUp.name.$model"
+              placeholder="Enter your name"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+            <template v-if="validateSignUp.name.$error">
+              <div
+                v-for="error of validateSignUp.name.$errors"
+                :key="error.$uid"
+                class="text-red-500 text-sm mt-1"
+              >
+                {{ error.$message }}
+              </div>
+            </template>
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label for="email" class="block text-white text-sm font-bold mb-2">Email</label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              v-model.trim="validateSignUp.email.$model"
+              placeholder="Enter your email"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+            <template v-if="validateSignUp.email.$error">
+              <div
+                v-for="error of validateSignUp.email.$errors"
+                :key="error.$uid"
+                class="text-red-500 text-sm mt-1"
+              >
+                {{ error.$message }}
+              </div>
+            </template>
+          </div>
+
+          <!-- Mobile No. -->
+          <div>
+            <label for="mobile" class="block text-white text-sm font-bold mb-2">Mobile No.</label>
+            <input
+              id="mobile"
+              type="tel"
+              name="mobile"
+              v-model.trim="validateSignUp.mobile.$model"
+              placeholder="Enter your mobile number"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+            <template v-if="validateSignUp.mobile.$error">
+              <div
+                v-for="error of validateSignUp.mobile.$errors"
+                :key="error.$uid"
+                class="text-red-500 text-sm mt-1"
+              >
+                {{ error.$message }}
+              </div>
+            </template>
+          </div>
+
+          <!-- Password -->
+          <div>
+            <label for="password" class="block text-white text-sm font-bold mb-2">Password</label>
+            <div class="relative">
+              <input
+                :type="passwordFields.password ? 'text' : 'password'"
+                id="password"
+                name="password"
+                v-model.trim="validateSignUp.password.$model"
+                placeholder="Enter your password"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+              <span
+                @click="togglePasswordVisibility('password')"
+                class="absolute inset-y-0 right-4 flex items-center cursor-pointer"
+              >
+                <EyeOffIcon v-if="passwordFields.password" class="w-5 text-gray-600" />
+                <EyeIcon v-else class="w-5 text-gray-600" />
+              </span>
+            </div>
+            <template v-if="validateSignUp.password.$error">
+              <div
+                v-for="error of validateSignUp.password.$errors"
+                :key="error.$uid"
+                class="text-red-500 text-sm mt-1"
+              >
+                {{ error.$message }}
+              </div>
+            </template>
+          </div>
+
+          <!-- Confirm Password -->
+          <div>
+            <label for="confirm_password" class="block text-white text-sm font-bold mb-2">Confirm Password</label>
+            <div class="relative">
+              <input
+                :type="passwordFields.confirm_password ? 'text' : 'password'"
+                id="confirm_password"
+                name="confirm_password"
+                v-model.trim="validateSignUp.confirm_password.$model"
+                placeholder="Confirm your password"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+              <span
+                @click="togglePasswordVisibility('confirm_password')"
+                class="absolute inset-y-0 right-4 flex items-center cursor-pointer"
+              >
+                <EyeOffIcon v-if="passwordFields.confirm_password" class="w-5 text-gray-600" />
+                <EyeIcon v-else class="w-5 text-gray-600" />
+              </span>
+            </div>
+            <template v-if="passwordsMatch === false">
+              <p class="text-red-500 text-sm mt-1">Password does not match with confirm password</p>
+            </template>
+          </div>
+        </div>
+
+        <!-- OTP Section -->
+        <div v-if="otpAuthSignup">
+          <label for="otp" class="block text-white text-sm font-bold mb-2">Enter OTP</label>
           <input
-            v-model="username"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="username"
+            id="otp"
             type="text"
-            placeholder="Enter your username"
-            required
-          />
-        </div>
-
-        <div>
-          <label class="block text-white text-sm font-bold mb-2" for="email">
-            Email
-          </label>
-          <input
-            v-model="email"
+            name="otp"
+            v-model.trim="validateOtp.otp.$model"
+            placeholder="Enter your 6-digit OTP"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="email"
-            type="email"
-            placeholder="Enter your email"
-            required
           />
+          <template v-if="validateOtp.otp.$errors">
+            <div
+              v-for="error of validateOtp.otp.$errors"
+              :key="error.$uid"
+              class="text-red-500 text-sm mt-1"
+            >
+              {{ error.$message }}
+            </div>
+          </template>
         </div>
 
-        <div>
-          <label class="block text-white text-sm font-bold mb-2" for="phone">
-            Phone Number
-          </label>
-          <input
-            v-model="phone"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="phone"
-            type="tel"
-            placeholder="Enter your phone number"
-            required
-          />
+        <!-- Terms and Conditions -->
+        <div class="flex justify-start">
+          <div class="flex items-center">
+            <input type="checkbox" id="T&C" v-model="checkbox" class="mr-2" />
+            <label for="T&C" class="text-white text-sm font-bold">
+              I agree to the&nbsp;
+              <a :href="tncUrl" target="_blank" class="text-yellow-300 underline">T&C</a> and&nbsp;
+              <a :href="privacyPolicyUrl" target="_blank" class="text-yellow-300 underline">Privacy Policy</a>
+            </label>
+          </div>
         </div>
 
-        <div>
-          <label class="block text-white text-sm font-bold mb-2" for="password">
-            Password
-          </label>
-          <input
-            v-model="password"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="password"
-            type="password"
-            placeholder="Enter your password"
-            required
-          />
-        </div>
-
-        <div>
-          <label class="block text-white text-sm font-bold mb-2" for="confirm-password">
-            Confirm Password
-          </label>
-          <input
-            v-model="confirmPassword"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="confirm-password"
-            type="password"
-            placeholder="Confirm your password"
-            required
-          />
-        </div>
-
-        <div>
-          <p class="text-red-500 text-sm" v-if="errorMessage">{{ errorMessage }}</p>
-        </div>
-
-        <div class="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+        <!-- Submit Buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-between mt-6 space-y-4 sm:space-y-0">
           <button
+            v-if="!otpAuthSignup"
+            type="button"
+            @click="signUp"
+            :disabled="!checkbox || passwordsMatch === false"
             class="w-full sm:w-auto bg-yellow-300 hover:bg-yellow-500 text-[#1c5a5a] font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out"
-            type="submit"
           >
-            Sign Up
+            Register
           </button>
 
+          <button
+            v-if="otpAuthSignup"
+            type="submit"
+            :disabled="!validateOtp.otp.$dirty || validateOtp.otp.$error"
+            class="w-full sm:w-auto bg-yellow-300 hover:bg-yellow-500 text-[#1c5a5a] font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out"
+          >
+            Submit OTP
+          </button>
+
+          <!-- Already Registered -->
           <p class="text-sm text-white">
-            Already have an account?
-            <span 
-              class="underline cursor-pointer hover:text-yellow-300 transition duration-300 ease-in-out" 
-              @click="redirectToLogin"
-            >
-              Log in
-            </span>
+            Already have an account?&nbsp;
+            <a href="/login" class="underline cursor-pointer hover:text-yellow-300 transition duration-300 ease-in-out">
+              Login
+            </a>
           </p>
         </div>
       </form>
@@ -100,34 +195,119 @@
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 
-const username = ref('');
-const email = ref('');
-const phone = ref('');
-const password = ref('');
-const confirmPassword = ref('');
-const errorMessage = ref('');
-const router = useRouter();
+<<script setup lang="ts">
+import { ref, computed, reactive, toRefs } from 'vue'
+import { required, minLength, email, sameAs } from '@vuelidate/validators'
+import { useVuelidate } from '@vuelidate/core'
+import { makeRequest, state } from '../request/request'
+import router from '../router/index'
 
 
-const handleSignup = () => {
 
-  // Basic validation
-  if (password.value !== confirmPassword.value) {
-    errorMessage.value = 'Passwords do not match';
-    return;
+// Reactive variables
+const error = ref("")
+const checkbox = ref(false)
+const otpAuthSignup = ref(false)
+const emailsignup = ref('')
+const tncUrl = ref('')
+const privacyPolicyUrl = ref('')
+
+// Password visibility control
+const passwordFields = reactive({
+  password: false,
+  confirm_password: false
+})
+
+// Function to toggle password visibility
+function togglePasswordVisibility(field) {
+  passwordFields[field] = !passwordFields[field];
+}
+
+
+const otpData = reactive({
+  email: '',
+  otp: ''
+})
+
+const otpRules = {
+  email: { required },
+  otp: { required, minLength: minLength(6) },
+}
+
+const validateOtp = useVuelidate(otpRules, toRefs(otpData))
+
+// Vuelidate setup for Sign Up
+const signUpData = reactive({
+  name: '',
+  email: '',
+  mobile: '',
+  password: '',
+  confirm_password: '',
+  isAgree: false,
+  mobile_prefix: '+91'
+})
+
+const signUpRules = {
+  name: { required },
+  email: { required, email },
+  mobile: { required },
+  password: { required, minLength: minLength(6) },
+  confirm_password: { 
+    required,
+    sameAs: sameAs(() => signUpData.password)
   }
+}
 
-  localStorage.setItem('authToken', '1234');
+const validateSignUp = useVuelidate(signUpRules, toRefs(signUpData))
 
-  router.push('/');
-};
+// Password mismatch computed property
+const passwordsMatch = computed(() => {
+  return signUpData.password === signUpData.confirm_password
+})
 
-const redirectToLogin = () => {
-  router.push('/login');
-};
+// Sign Up function
+const signUp = async () => {
+  try {
+    validateSignUp.value.$touch()
+    if (!validateSignUp.value.$invalid) {
+      signUpData.mobile = `${signUpData.mobile}`
+      signUpData.isAgree = checkbox.value
+      const response = await makeRequest('register', 'POST', signUpData)
+      if (response) {
+        otpAuthSignup.value = true
+        otpData.email = signUpData.email
+        idForOtpVerify.value = response.data
+        error.value = ""
+      } else {
+        error.value = state["register"].error.data.message
+      }
+    }
+  } catch (err) {
+    error.value = state["register"].error.message || err.message
+  }
+}
+
+// OTP Verification function
+const idForOtpVerify = ref(0)
+
+const verifyOtp = async () => {
+  try {
+    validateOtp.value.$touch()
+    if (!validateOtp.value.$invalid) {
+      const response = await makeRequest('verifyOTP', 'PUT', otpData, {}, {}, 0, idForOtpVerify.value)
+      if (response) {
+        error.value = ""
+        router.push({ name: 'login' })
+      } else {
+        error.value = state["verifyOTP"].error.data.message
+      }
+    }
+  } catch (err) {
+    error.value = state["verifyOTP"].error.message || err.message
+  }
+}
+
 </script>
+

@@ -2,12 +2,12 @@
     <div class="bg-[#1c5a5a] min-h-screen flex items-center justify-center">
         <div class=" border-yellow-500 border-2 rounded-md px-8 py-10 mb-4 w-full max-w-md">
             <h2 class="text-3xl font-bold text-center text-yellow-500 mb-20">Login</h2>
-            <form @submit.prevent="handleSubmit">
+            <form >
                 <div class="mb-4">
                     <label class="block text-white text-md font-bold mb-2" for="email">
                         Email
                     </label>
-                    <input v-model="email"
+                    <input v-model="signinData.email"
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-5"
                         id="email" type="email" placeholder="Enter your email" required />
                 </div>
@@ -16,7 +16,7 @@
                     <label class="block text-white text-md font-bold mb-2" for="password">
                         Password
                     </label>
-                    <input v-model="password"
+                    <input v-model="signinData.password"
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="password" type="password" placeholder="Enter your password" required />
                 </div>
@@ -29,7 +29,7 @@
                 </div>
 
                 <div class="flex items-center justify-between">
-                    <button
+                    <button @click="login"
                         class="bg-yellow-300 hover:bg-yellow-500 text-[#1c5a5a] font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         type="submit">
                         Login
@@ -50,24 +50,44 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-const email = ref('');
-const password = ref('');
+const signinData = reactive({
+    email : "",
+    password : ""
+})
 const errorMessage = ref('');
 const router = useRouter();
-const handleSubmit = () => {
-    if (email.value === '' || password.value === '') {
-        errorMessage.value = 'Please fill in both fields';
-        return;
+const login = async () => {
+  try {
+    validateSignin.value.$touch();
+    if (!validateSignin.value.$invalid) {
+      const response = await makeRequest('login', 'POST', signinData)
+      
+      if (response) {
+        let token = response.data.access_token
+        setToken(token);
+
+        setisAuthenticated(true,response.data.role_name);
+        localStorage.setItem("role", response.data.role_name);
+
+        localStorage.setItem("token", token);
+        localStorage.setItem("refresh", 'true');
+        router.push({ name: 'dashboard' })
+        
+        error.value = "";
+      } else {
+        error.value = state["login"].error.data.message;
+      }
     }
-    
-    
-    localStorage.setItem("authToken", "1234");
-    router.push("/")
-   
-};
+  } catch (error) {
+    error.value = state["login"].error.message;
+    if (error.value) {
+      error.value = state["login"].error.data.message;
+    }
+  }
+}
 </script>
 
 <style scoped>

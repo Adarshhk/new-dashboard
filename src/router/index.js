@@ -72,29 +72,4 @@ const router = createRouter({
     }
   ],
 });
-
-// Global navigation guard
-router.beforeEach((to, from, next) => {
-    // Define routes that don't require authentication (e.g., Login, Signup)
-    const publicPages = ["/login", "/signup" , "/forgot-password"];
-    const authRequired = !publicPages.includes(to.path);
-    const isLoggedIn = isAuthenticated(); // Simulated authentication check
-    
-    // If the user is not authenticated and trying to access a protected page
-    if (authRequired && !isLoggedIn) {
-      // Redirect to login page if not authenticated
-      next("/login");
-    } 
-    // If the user is already logged in, prevent access to login/signup
-    else if (isLoggedIn && publicPages.includes(to.path)) {
-      // Redirect logged-in users away from login or signup pages
-      next("/");
-    } 
-    else {
-      // Allow access
-      next();
-    }
-  });
-  
-
 export default router;

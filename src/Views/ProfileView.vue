@@ -7,7 +7,7 @@
       <div class="bg-[#115e59] rounded-lg shadow-md p-6  top-8 xs:block sm:hidden">
               <h3 class="text-xl font-semibold text-yellow-500 mb-4">Quote of the Day</h3>
               <p class="text-white italic">
-                "Success is not final, failure is not fatal: It is the courage to continue that counts." - Winston Churchill
+                {{profileData.quote_of_the_day}}
               </p>
             </div>
         

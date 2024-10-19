@@ -40,7 +40,7 @@ export const useProfileStore = defineStore("profile", () => {
         pincode: ""
       },
       quote_of_the_day:
-        '"Success is not final, failure is not fatal: It is the courage to continue that counts." - Winston Churchill'
+        '"Success is not final, failure is not fatal: It is the courage to continue that counts." - Adarsh'
     }
   }
 

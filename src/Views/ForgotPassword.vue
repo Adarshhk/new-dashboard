@@ -9,7 +9,7 @@
                         Email Address
                     </label>
                     <input
-                        v-model="email"
+                        v-model="formData.email"
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-5"
                         id="email"
                         type="email"
@@ -18,17 +18,17 @@
                     />
                 </div>
 
-                <!-- Contact Input -->
+                <!-- password Input -->
                 <div class="mb-4">
-                    <label class="block text-white text-md font-bold mb-2" for="contact">
-                        Phone Number
+                    <label class="block text-white text-md font-bold mb-2" for="password">
+                        New Password
                     </label>
                     <input
-                        v-model="contact"
+                        v-model="formData.password"
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-5"
-                        id="contact"
-                        type="text"
-                        placeholder="Enter your contact number"
+                        id="password"
+                        type="password"
+                        placeholder="Enter New Password"
                         required
                     />
                 </div>
@@ -60,7 +60,7 @@
                 <div class="flex items-center justify-between mb-10">
                     <button
                         class="bg-yellow-300 hover:bg-yellow-500 text-[#1c5a5a] font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-                        type="submit">
+                        @click="verifyOtp">
                         Submit
                     </button>
                 </div>
@@ -74,34 +74,59 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { makeRequest } from '../request/request';
+import { reactive } from 'vue';
 
-const email = ref('');
-const contact = ref('');
-const otp = ref('');
-const errorMessage = ref('');
+const formData = reactive({
+    email : "",
+    password : "",
+})
+
+const otp = ref("");
+
 const router = useRouter();
 
-const sendOtp = () => {
-    if (!email.value || !contact.value) {
-        errorMessage.value = 'Please fill in both email and contact number.';
-        return;
-    }
-    // Simulate sending OTP
-    console.log('OTP sent to', email.value, contact.value);
-    errorMessage.value = ''; // Clear error message after successful OTP send
-};
+const sendOtp = async () => {
+  try {
+      const response = await makeRequest('sendForgotOTP', 'POST', {email: forgotEmail.value}, {}, {},0) 
+      if(response) {
+        error.value = "";
+        forOtpVerify.value = true
+        otpData.email = forgotEmail.value
+      } else{
+        error.value = state["sendForgotOTP"].error.data.message;
+      }
+  } catch (error) {
+    error.value = state["sendForgotOTP"].error.message;
+  }
+}
 
-const handleSubmit = () => {
-    if (!email.value || !contact.value || !otp.value) {
-        errorMessage.value = 'Please fill in all fields before submitting.';
-        return;
-    }
+const verifyOtp = async () => {
+    try {
+      validateOtp.value.$touch();
+      if (!validateOtp.value.$invalid) {
+          const response = await makeRequest('forgot', 'PUT', otp, {}, {},0) 
 
-    // Simulate OTP verification and password reset process
-    console.log('OTP submitted successfully');
-    localStorage.setItem("authToken", "5678");
-    router.push("/"); // Redirect to the homepage or a reset password page
-};
+          if(response) {
+            error.value = "";
+            forOtpVerify.value = false
+            forgotPassword.value = false
+            router.push({ name: 'login' })
+            showToast("Password changed successfully", "success")
+          } else {
+            error.value = state["forgot"].error.data.message;
+          }
+      } 
+  } catch (error) {
+    error.value = state["forgot"].error.message;
+    if (error.value) {
+      error.value = state["forgot"].error.data.message;
+    }
+  }
+}
+
+
+
 </script>
 
 <style scoped>
