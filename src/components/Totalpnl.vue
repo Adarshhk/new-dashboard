@@ -7,7 +7,7 @@
     
     </template>
     
-    <script setup lang="ts">
+    <script setup>
     import { computed,ref } from 'vue';
     import {usePositionsStore} from '../stores/matrix/position'
     import { useTickerStore } from '../stores/matrix/ticker/ticker';
@@ -17,16 +17,16 @@
     const positionsStore=usePositionsStore()
     
     
-    function getLtp(position: any){
+    function getLtp(position){
       let ltp = tickerStore.getLastPrice(position.instrument_token)
     return  ltp || position.last_price
     }
     
-    let totalProfit: any =0
+    let totalProfit=0
      totalProfit = computed(() => {
       let tp = 0;
       if (positionsStore.positions.length > 0) {
-        positionsStore.positions.forEach((position: any) => {
+        positionsStore.positions.forEach((position) => {
           let pnl = 0;
           let ltp = getLtp(position);
           if (position.status !== "OPEN" ) {

@@ -9,13 +9,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "-": "^0.0.1",
     "@heroicons/vue": "^1.0.6",
+    "@lottiefiles/vue-lottie-player": "^1.1.0",
     "@vuelidate/core": "^2.0.3",
     "@vuelidate/validators": "^2.0.4",
     "axios": "^1.7.7",
+    "lottie-web": "^5.12.2",
     "pinia": "^2.2.4",
+    "save": "^2.9.0",
     "vue": "^3.5.10",
+    "vue-lottie-player": "^0.1.9",
     "vue-router": "^4.4.5",
+    "vue3-lottie": "^3.3.1",
     "vuelidate": "^0.7.7"
   },
   "devDependencies": {
