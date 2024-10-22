@@ -7,7 +7,9 @@
   import lottie from 'lottie-web';
   
   // Import the animation JSON file (resolve with bundler)
-  import animationData from '../animations/anim.json';
+  const props = defineProps({
+    animationData : Object
+  })
   
   // Reference for the container
   const lottieContainer = ref(null);
@@ -19,7 +21,7 @@
       renderer: 'svg',
       loop: true,
       autoplay: true,
-      animationData, // Use imported JSON data directly
+      animationData : props.animationData, // Use imported JSON data directly
     });
   });
   </script>

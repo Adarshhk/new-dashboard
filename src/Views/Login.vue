@@ -13,7 +13,7 @@
 </div>
 
 <div class="mx-auto mt-12 size-[26rem]">
-  <LottieAnimation />
+  <LottieAnimation :animationData="animationData"/>
 </div>
 </div>
     </div>
@@ -74,6 +74,7 @@
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import LottieAnimation from '../components/LottieAnimation.vue';
+import animationData from '../animations/anim.json'
 
 const signinData = reactive({
   email: "",

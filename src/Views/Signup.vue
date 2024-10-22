@@ -14,7 +14,7 @@
         </div>
 
         <div class="mx-auto mt-12 size-[26rem]">
-          <LottieAnimation />
+          <LottieAnimation :animationData="animationData"/>
         </div>
       </div>
     </div>
@@ -167,8 +167,7 @@ import { useVuelidate } from '@vuelidate/core'
 import { makeRequest, state } from '../request/request'
 import router from '../router/index'
 import LottieAnimation from '../components/LottieAnimation.vue'
-
-
+import animationData from '../animations/anim2.json'
 // Reactive variables
 const error = ref("")
 const checkbox = ref(false)
