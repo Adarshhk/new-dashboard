@@ -1,7 +1,7 @@
 <template>
   <div class="bg-[url('/public/login.jpg')] h-screen grid grid-cols-2">
     <div class="col-span-1 xs:hidden md:block">
-      <div class="bg-white rounded-lg w-3/4 h-4/5 mx-auto mt-20">
+      <div class="bg-white rounded-lg w-3/4  h-4/5 mx-auto mt-20">
 
 <div class="ml-12">
   

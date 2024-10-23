@@ -30,7 +30,7 @@
             <td class="py-2 px-4 hidden sm:table-cell">
               <div class="flex items-center">
                 <img :src="getBrokerImage(brokerStore.findBrokerById(strategy.broker_id).broker_name)" class="size-6" alt="" />
-                {{ brokerStore.findBrokerById(strategy.broker_id).broker_name }}
+                   &nbsp; {{brokerStore.findBrokerById(strategy.broker_id).broker_name }}
               </div>
             </td>
             <td class="py-2 px-4 hidden sm:table-cell">{{ strategy.lots }}</td>
