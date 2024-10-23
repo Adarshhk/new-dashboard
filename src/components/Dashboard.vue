@@ -94,7 +94,7 @@ import { useOrdersStore } from '../stores/matrix/order'
 import { useUsersStore } from '../stores/matrix/users'
 import deliveryBox from '../assets/images/DeliveryBox.png'
 import setting from '../assets/images/setting.png'
-import userPng from '../assets/images/User.png'
+import userPng from '../assets/images/user.png'
 
 import Totalpnl from './Totalpnl.vue'
 import { usePositionsStore } from '../stores/matrix/position'
