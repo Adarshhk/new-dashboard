@@ -1,11 +1,15 @@
-<script setup>
-import Dashboard from '../src/components/Dashboard.vue'
-</script>
-
 <template>
-    <Dashboard/>
+    <RouterView/>
 </template>
+  
+  <script setup>
 
-<style scoped>
+import { RouterView } from 'vue-router';
 
-</style>
+
+  </script>
+  
+  <style>
+  /* Optional: You can add styling here for your main content */
+  </style>
+  

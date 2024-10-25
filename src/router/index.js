@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+
 import Dashboard from "../Views/Dashboard/Dashboard.vue";
 
 import MyStrategy from "../Views/MyStrategy/MyStrategy.vue";
